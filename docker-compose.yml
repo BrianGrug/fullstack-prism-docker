@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: briangrug/frontend:latest
+    image: docker.grug.dev/frontend:latest
     container_name: panel
     depends_on:
       - mongo
@@ -17,7 +17,7 @@ services:
       - license
 
   panel-api:
-    image: briangrug/backend:latest
+    image: docker.grug.dev/backend:latest
     container_name: panel-api
     depends_on:
       - mongo
@@ -26,7 +26,7 @@ services:
     environment:
       - MONGODB_URI=mongodb://root:TestDB@mongo
       - MONGODB_DB=panel
-      - ${INJECTOR_CACHE}=/root/license/injection-server/testserver/cache
+      - INJECTOR_CACHE=${INJECTOR_CACHE}
     networks:
       - license
 
@@ -38,6 +38,7 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
     networks:
       - license
+
   mongo:
     image: mongo
     restart: always
@@ -50,6 +51,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: TestDB
     networks:
       - license
+
   injector:
     image: briangrug/injector:latest
     volumes:
