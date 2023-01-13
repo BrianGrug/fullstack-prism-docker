@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: docker.grug.dev/frontend:latest
+    image: docker.grug.dev/licensepanel:latest
     container_name: panel
     depends_on:
       - mongo
@@ -17,7 +17,7 @@ services:
       - license
 
   panel-api:
-    image: docker.grug.dev/backend:latest
+    image: docker.grug.dev/licenseapi:latest
     container_name: panel-api
     depends_on:
       - mongo
@@ -56,7 +56,7 @@ services:
     image: briangrug/injector:latest
     volumes:
       - './injector/cache:/app/cache'
-      - './injector/software:/app/software--restart'
+      - './injector/software:/app/software'
     networks:
       - license
 
