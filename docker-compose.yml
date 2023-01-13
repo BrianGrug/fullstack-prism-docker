@@ -1,0 +1,63 @@
+services:
+  frontend:
+    image: briangrug/frontend:latest
+    container_name: panel
+    depends_on:
+      - mongo
+    ports:
+      - 3000:3000
+    environment:
+      - NEXTAUTH_URL=${API_URL}
+      - MONGODB_URI=mongodb://root:TestDB@mongo
+      - API_URL=${API_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
+    networks:
+      - license
+
+  panel-api:
+    image: briangrug/backend:latest
+    container_name: panel-api
+    depends_on:
+      - mongo
+    ports:
+      - 3001:3001
+    environment:
+      - MONGODB_URI=mongodb://root:TestDB@mongo
+      - MONGODB_DB=panel
+      - ${INJECTOR_CACHE}=/root/license/injection-server/testserver/cache
+    networks:
+      - license
+
+  redis:
+    image: 'bitnami/redis:latest'
+    ports:
+      - 6379:6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - license
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017-27019:27017-27019
+    volumes:
+      - ./data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: TestDB
+    networks:
+      - license
+  injector:
+    image: briangrug/injector:latest
+    volumes:
+      - './injector/cache:/app/cache'
+      - './injector/software:/app/software--restart'
+    networks:
+      - license
+
+networks:
+  license:
+    name: license
