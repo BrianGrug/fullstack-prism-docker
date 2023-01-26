@@ -2,23 +2,20 @@ services:
   frontend:
     image: docker.grug.dev/licensepanel:latest
     container_name: panel
+    env_file:
+      - frontend.env
     depends_on:
       - mongo
     ports:
       - 3000:3000
-    environment:
-      - NEXTAUTH_URL=${API_URL}
-      - MONGODB_URI=mongodb://root:TestDB@mongo
-      - API_URL=${API_URL}
-      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
-      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
     networks:
       - license
 
   panel-api:
     image: docker.grug.dev/licenseapi:latest
     container_name: panel-api
+    env_file: 
+      - backend.env
     depends_on:
       - mongo
     ports:
@@ -26,7 +23,6 @@ services:
     environment:
       - MONGODB_URI=mongodb://root:TestDB@mongo
       - MONGODB_DB=panel
-      - INJECTOR_CACHE=${INJECTOR_CACHE}
     networks:
       - license
 
@@ -53,7 +49,7 @@ services:
       - license
 
   injector:
-    image: briangrug/injector:latest
+    image: docker.grug.dev/injector:latest
     volumes:
       - './injector/cache:/app/cache'
       - './injector/software:/app/software'
